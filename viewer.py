@@ -17,7 +17,7 @@ class Viewer:
         turtle.register_shape('vessel', (
             (0, self.l_vessel), (w_vessel, self.l_vessel / 2), (w_vessel, -self.l_vessel), (-w_vessel, -self.l_vessel),
             (-w_vessel, self.l_vessel / 2)))
-        turtle.register_shape('rudder', ((-1, 0), (1, 0), (1, -10), (-1, -10)))
+        turtle.register_shape('rudder', ((-1, 0), (1, 0), (1, -50), (-1, -50)))
         turtle.degrees()
 
         #

@@ -1,6 +1,8 @@
 import numpy as np
 import gym
 
+
+from keras.callbacks import TensorBoard
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten
 from keras.optimizers import Adam
@@ -54,12 +56,27 @@ dqn.compile(Adam(lr=1e-3), metrics=['mae'])
 
 
 # Define 'test' for testing an existing network weights or 'train' to train a new one!
-mode = 'test'
-filename = 'dqn_v1'
+mode = 'train'
+filename = 'dqn_1000e_60deg_complex'
 
 if mode == 'train':
     # Train the agent
-    hist = dqn.fit(env, nb_steps=200000, visualize=False, verbose=2, nb_max_episode_steps=1000) # 20s episodes
+    tensorb = TensorBoard(log_dir='./logs', histogram_freq=0, batch_size=32, write_graph=True, write_grads=False, write_images=False, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None, embeddings_data=None, update_freq='batch')
+    
+    tb = TensorBoard(log_dir='./logs/log_{}'.format(filename))
+    
+    hist = dqn.fit(env, nb_steps=200000, visualize=False, verbose=2, nb_max_episode_steps=1000, callbacks=[tb]) # 20s episodes
+    
+    # print history
+    print("history contents : ", hist.history.keys()) # episode_reward, nb_episode_steps, nb_steps
+    # summarize history for accuracy
+    import matplotlib.pyplot as plt
+    plt.plot(hist.history['episode_reward'])
+    plt.plot(hist.history['nb_episode_steps'])
+    plt.title('learning')
+    plt.xlabel('episode')
+    plt.legend(['episode_reward', 'nb_episode_steps'], loc='upper left')
+    plt.show()
     
     # save history
     with open('_experiments/history_'+ filename + '.pickle', 'wb') as handle:

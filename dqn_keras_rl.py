@@ -14,7 +14,8 @@ import pickle
 os.environ["CUDA_VISIBLE_DEVICES"]="-1" #comment this line if you want to use cuda
 
 # Get the environment and extract the number of actions.
-env = YachtEnv(type='discrete', action_dim=2)
+env = YachtEnv(type='discrete', action_dim=1)
+#env = YachtEnv(type='discrete_', action_dim=1)
 np.random.seed(551)
 env.seed(551)
 
@@ -43,11 +44,11 @@ dqn = DQNAgent(model=model, nb_actions=nb_actions, memory=memory, nb_steps_warmu
 dqn.compile(Adam(lr=1e-3), metrics=['mae'])
 
 # Define 'test' for testing an existing network weights or 'train' to train a new one!
-mode = 'test'
+mode = 'train'
 
 if mode == 'train':
-    filename = '400kit_rn4_maior2_mem20k_20acleme_target1000_epsgr1'
-    hist = dqn.fit(env, nb_steps=300000, visualize=False, verbose=2)
+    filename = 'train_vcst' #'400kit_rn4_maior2_mem20k_20acleme_target1000_epsgr1'
+    hist = dqn.fit(env, nb_steps=100000, visualize=False, verbose=2)
     with open('C:/Users/ben.vdb/Documents/Github/RLpylot/_experiments/history_dqn_test_'+ filename + '.pickle', 'wb') as handle:
         pickle.dump(hist.history, handle, protocol=pickle.HIGHEST_PROTOCOL)
 

@@ -13,7 +13,7 @@ class YachtEnv(Env):
     def __init__(self, type='continuous', action_dim = 2):
         self.type = type
         self.action_dim = action_dim
-        assert type == 'continuous' or type == 'discrete', 'type must be continuous or discrete'
+        assert type == 'continuous' or type == 'discrete' or type == 'discrete_' , 'type must be continuous or discrete'
         assert action_dim > 0 and action_dim <=2, 'action_dim must be 1 or 2'
         if type == 'continuous':
             self.action_space = spaces.Box(low=np.array([-1.0, 0]), high=np.array([1.0, 0.2]))
@@ -26,6 +26,13 @@ class YachtEnv(Env):
                 self.action_space = spaces.Discrete(21)
             self.observation_space = spaces.Box(low=np.array([0, -np.pi / 2, 0, -4, -0.4]), high=np.array([150, np.pi / 2, 4.0, 4.0, 0.4]))
             self.init_space = spaces.Box(low=np.array([0, -np.pi / 15, 1.0, 0.2, -0.01]), high=np.array([30, np.pi / 15, 2.0, 0.3, 0.01]))
+            
+        # obs space (d, theta, vx, vy, thetadot, (angle_rud) )  action space (angle rud)
+        elif type == 'discrete_':
+            self.action_space = spaces.Discrete(21)
+            self.observation_space = spaces.Box(low=np.array([0, -np.pi / 2, 0, -4, -0.4]), high=np.array([150, np.pi / 2, 6.0, 4.0, 0.4]))
+            self.init_space = spaces.Box(low=np.array([-30, -np.pi / 15, 1.0, 0.2, -0.01]), high=np.array([30, np.pi / 15, 2.0, 0.3, 0.01]))
+            
         self.yacht_data = None
         self.name_experiment = None
         self.last_pos = np.zeros(3)
@@ -63,6 +70,13 @@ class YachtEnv(Env):
             angle_action = (action - 10) / 10
             angle_action = angle_action * side
             rot_action = 0.2
+        
+        elif self.type == 'discrete_':
+            side = np.sign(self.last_pos[1])
+            angle_action = (action - 10) / 10
+            angle_action = angle_action * side
+            rot_action = 0.2
+            
         state_prime = self.simulator.step(angle_level=angle_action, rot_level=rot_action)
         # convert simulator states into obervable states
         obs = self.convert_state(state_prime)

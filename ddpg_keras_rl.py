@@ -10,11 +10,11 @@ from keras.optimizers import Adam
 from rl.agents import DDPGAgent
 from rl.memory import SequentialMemory
 from rl.random import OrnsteinUhlenbeckProcess
-from ship_env import ShipEnv
+from yacht_env import YachtEnv
 
 
 # Get the environment and extract the number of actions.
-env = ShipEnv()
+env = YachtEnv()
 np.random.seed(666)
 env.seed(666)
 assert len(env.action_space.shape) == 1
@@ -56,20 +56,22 @@ agent = DDPGAgent(nb_actions=nb_actions, actor=actor, critic=critic, critic_acti
 agent.compile(Adam(lr=0.001,  clipnorm=1.), metrics=['mae'])
 
 # Okay, now it's time to learn something!
-mode = 'test'
+mode = 'train'
+
+filename = 'base' # '600kit_rn4_maior2_mem20k_target01_theta3_batch32_adam2'
+
 if mode == 'train':
-    hist = agent.fit(env, nb_steps=1000000, visualize=False, verbose=2, nb_max_episode_steps=1000)
-    filename = '600kit_rn4_maior2_mem20k_target01_theta3_batch32_adam2'
+    hist = agent.fit(env, nb_steps=100000, visualize=False, verbose=2, nb_max_episode_steps=1000)
     # we save the history of learning, it can further be used to plot reward evolution
-    with open('_experiments/history_ddpg__redetorcs'+filename+'.pickle', 'wb') as handle:
+    with open('_experiments/history_ddpg_'+filename+'.pickle', 'wb') as handle:
          pickle.dump(hist.history, handle, protocol=pickle.HIGHEST_PROTOCOL)
     #After training is done, we save the final weights.
-    agent.save_weights('h5f_files/ddpg_{}_weights.h5f'.format('600kit_rn4_maior2_mem20k_target01_theta3_batch32_adam2_action_lim_1'), overwrite=True)
+    agent.save_weights('h5f_files/ddpg_{}_weights.h5f'.format(filename), overwrite=True)
 
     # Finally, evaluate our algorithm for 5 episodes.
     agent.test(env, nb_episodes=10, visualize=True, nb_max_episode_steps=1000)
 elif mode == 'test':
     env.set_test_performace() # Define the initialization as performance test
     env.set_save_experice()   # Save the test to plot the results after
-    agent.load_weights('h5f_files/ddpg_{}_weights.h5f'.format('600kit_rn4_maior2_mem20k_target01_theta3_batch32_adam2'))
+    agent.load_weights('h5f_files/ddpg_{}_weights.h5f'.format(filename))
     agent.test(env, nb_episodes=10, visualize=True, nb_max_episode_steps=1000)

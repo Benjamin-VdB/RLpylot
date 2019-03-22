@@ -141,16 +141,14 @@ class YachtExperiment:
             plt.show()
 
     def plot_obs(self, iter=0, time=True):
-        img, ax = plt.subplots(5, sharex=True)
-        self.obs_states_str[0] = 'd'
+        img, ax = plt.subplots(3, sharex=True)
+        self.obs_states_str[0] = 'rudder'
         self.obs_states_str[1] = 'Θ'
-        self.obs_states_str[2] = 'vx'
-        self.obs_states_str[3] = 'vy'
-        self.obs_states_str[4] = 'dΘ/dt'
+        self.obs_states_str[2] = 'dΘ/dt'
         if iter == -1:
             for j in range(self.iterations+1):
                 ax[0].set_title("Observed states")
-                for i in range(5):
+                for i in range(2):
                     ax[i].set_ylabel(self.obs_states_str[i])
                     if time:
                         ax[i].plot(self.time_step*np.arange(0, self.steps[j], 1), self.observations[j][1:, i], label="k="+str(j))
@@ -162,7 +160,7 @@ class YachtExperiment:
                         ax[i].xaxis.set_major_formatter(formatter)
             plt.legend(loc='right', bbox_to_anchor=(0.7, 2.8, 0.5, 2.8), borderaxespad=0.)
         else:
-            for i in range(5):
+            for i in range(2):
                 ax[i].set_title("Observed states")
                 ax[i].set_ylabel("Obs" + str(i))
                 if time:

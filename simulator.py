@@ -3,7 +3,6 @@
 import numpy as np
 from scipy.integrate import RK45
 
-
 class Simulator:
     def __init__(self):
         self.last_global_state = None
@@ -13,7 +12,7 @@ class Simulator:
         self.time_span = 10           # 10 seconds for each iteration
         self.number_iterations = 100  # 100 iterations for each step
         self.integrator = None
-        self.rk_mode = 'scipy_rk'
+        self.rk_mode = 'scipy_rk' # integrator mode
 
         ##Vessel Constants
 
@@ -53,7 +52,7 @@ class Simulator:
         ## Rudder Constants
         self.A_rud = 68 # propulsor thrus
         self.delta_x = self.x_prop - self.x_rudder  # distance between rudder and propulsor
-        self.r_aspect = 2 # aspect ration
+        self.r_aspect = 2 # aspect ratio
 
         ## Propulsor constants:
         self.D_prop = 7.2 # Diameter
@@ -107,14 +106,16 @@ class Simulator:
         x4 = local_states[3] #du
         x5 = local_states[4] #dv
         x6 = local_states[5] #dtheta
-        beta = self.current_action[0]*np.pi/6   #leme (-30 à 30)
+        beta = self.current_action[0]*np.pi/6   #rudder (-30 à 30)
         alpha = self.current_action[1]    #propulsor
+        
+       # x5 = 0 # no drift
 
         vc = np.sqrt(x4 ** 2 + x5 ** 2)
         gamma = np.pi+np.arctan2(x5, x4)
 
         # Composing resistivity forces
-        Re = self.pho * vc * self.L / self.mi
+        Re = self.pho * vc * self.L / self.mi # Reynolds number
         if Re == 0:
             C0=0
         else:
@@ -210,7 +211,11 @@ class Simulator:
             fx4 = (F1u + Fpx)/(self.M + self.M11)
             fx5 = (F1v + Fpy)/(self.M + self.M22)
             fx6 = (F1z + Fpz)/(self.Iz + self.M66)
-
+        
+        #constant speed
+       # fx4 = 0
+       # fx5 = 0
+        
         fx = np.array([fx1, fx2, fx3, fx4, fx5, fx6])
         return fx
 
