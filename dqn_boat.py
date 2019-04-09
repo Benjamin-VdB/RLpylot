@@ -57,8 +57,8 @@ dqn.compile(Adam(lr=1e-3), metrics=['mae'])
 
 
 # Define 'test' for testing an existing network weights or 'train' to train a new one!
-mode = 'test'
-filename = 'dqn_discrete10_rwd1.1_0.1sec'
+mode = 'train'
+filename = 'dqn_discrete10_4layers'
 
 if mode == 'train':
     # Train the agent
