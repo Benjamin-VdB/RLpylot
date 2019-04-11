@@ -11,7 +11,7 @@ import numpy as np
 class  BoatEnv(gym.Env):
     """
     Description:
-Boat at constant speed, only lateral forces and torques at the moment. Trying to keep the heading theta
+Boat at constant speed, only lateral forces and torques at the moment. Trying to keep the heading theta to 0
 
     Source:
         This environment corresponds to the version of the cart-pole problem described by Barto, Sutton, and Anderson
@@ -22,7 +22,7 @@ Boat at constant speed, only lateral forces and torques at the moment. Trying to
         0	Rudder position           -30 deg        30 deg
         1	Boat heading theta        -Pi            Pi
         2	Theta dot                 -Inf           Inf
-        3	Boat speed                -Inf           Inf
+        (3	Boat speed                -Inf           Inf)
                 
     Actions:
         Type: Discrete(5) or 10
@@ -33,10 +33,9 @@ Boat at constant speed, only lateral forces and torques at the moment. Trying to
         3	Action the rudder right slow
         4	Action the rudder right fast
         
-        Note: The amount the velocity that is reduced or increased is not fixed; it depends on the angle the pole is pointing. This is because the center of gravity of the pole increases the amount of energy needed to move the cart underneath it
 
     Reward:
-        Reward is 1 for every step taken, including the termination step
+        Reward is 1 when abs(theta) < 0.1 - cost for action taken
 
     Starting State:
         All observations are assigned a uniform random value in [-0.05..0.05]
