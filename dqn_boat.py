@@ -1,23 +1,30 @@
 import numpy as np
 import gym
 
-
 from keras.callbacks import TensorBoard
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten
 from keras.optimizers import Adam
 
 from rl.agents.dqn import DQNAgent
-from rl.policy import BoltzmannQPolicy
+from rl.policy import BoltzmannQPolicy, GreedyQPolicy
 from rl.memory import SequentialMemory
 from boat_env import BoatEnv
 
 import os
 import pickle
+
+import argparse
+
+# Prog arguments
+parser = argparse.ArgumentParser(description='Learning params')
+parser.add_argument('learnmode', type=str, help='train/test/real')
+args = parser.parse_args()
+
 os.environ["CUDA_VISIBLE_DEVICES"]="-1" #comment this line if you want to use cuda
 
 # Get the environment and extract the number of actions.
-env = BoatEnv(type='discrete')
+env = BoatEnv(type='discrete', mode='simulation')
 np.random.seed(123)
 env.seed(123)
 nb_actions = env.action_space.n
@@ -33,6 +40,14 @@ model.add(Dense(128))
 model.add(Activation('relu'))
 model.add(Dense(64))
 model.add(Activation('relu'))
+# model.add(Dense(16))
+# model.add(Activation('relu'))
+# model.add(Dense(16))
+# model.add(Activation('relu'))
+# model.add(Dense(16))
+# model.add(Activation('relu'))
+# model.add(Dense(32))
+# model.add(Activation('relu'))
 model.add(Dense(nb_actions))
 model.add(Activation('linear'))
 print(model.summary())
@@ -41,6 +56,8 @@ print(model.summary())
 # even the metrics!
 memory = SequentialMemory(limit=50000, window_length=1)
 policy = BoltzmannQPolicy()
+# policy = GreedyQPolicy()
+# policy = None # EPSgreedy in training / Greedy in test
 
 # simple dqn
 dqn = DQNAgent(model=model, nb_actions=nb_actions, memory=memory, nb_steps_warmup=1000,
@@ -57,16 +74,15 @@ dqn.compile(Adam(lr=1e-3), metrics=['mae'])
 
 
 # Define 'test' for testing an existing network weights or 'train' to train a new one!
-mode = 'train'
-filename = 'dqn_discrete10_4layers'
+mode = args.learnmode
+filename = 'dqn_discrete5_4lay_boltzman_rwd0.01and_neg0.1_targetonly_60deg' #'dqn_discrete5_4lay_epsgreedpol_rwd0.01and_neg0.1_targetonly_60deg'
 
 if mode == 'train':
     # Train the agent
-    tensorb = TensorBoard(log_dir='./logs', histogram_freq=0, batch_size=100, write_graph=True, write_grads=False, write_images=False, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None, embeddings_data=None, update_freq='batch')
     
     tb = TensorBoard(log_dir='./logs/log_{}'.format(filename))
     
-    hist = dqn.fit(env, nb_steps=200000, visualize=False, verbose=2, nb_max_episode_steps=500, callbacks=[tb]) # 20s episodes
+    hist = dqn.fit(env, nb_steps=100000, visualize=False, verbose=2, nb_max_episode_steps=500, callbacks=[tb]) # 20s episodes
     
     # print history
     print("history contents : ", hist.history.keys()) # episode_reward, nb_episode_steps, nb_steps
@@ -90,5 +106,14 @@ if mode == 'train':
     dqn.test(env, nb_episodes=5, visualize=True, nb_max_episode_steps=500)
     
 if mode == 'test':
+    dqn.load_weights('h5f_files/dqn_{}_weights.h5f'.format(filename))
+    dqn.test(env, nb_episodes=10, visualize=True, nb_max_episode_steps=400) # 40 seconds episodes
+    
+    
+if mode == 'real':
+    
+    # set the heading target
+    env.target = 0.
+    
     dqn.load_weights('h5f_files/dqn_{}_weights.h5f'.format(filename))
     dqn.test(env, nb_episodes=10, visualize=True, nb_max_episode_steps=400) # 40 seconds episodes

@@ -62,35 +62,35 @@ class SmcG2Serial(object):
 # Linux USB example:  "/dev/ttyACM0"  (see also: /dev/serial/by-id)
 # macOS USB example:  "/dev/cu.usbmodem001234562"
 # Windows example:    "COM6"
-port_name = "COM3"
+# port_name = "COM3"
  
 # Choose the baud rate (bits per second).  This does not matter if you are
 # connecting to the SMC over USB.  If you are connecting via the TX and RX
 # lines, this should match the baud rate in the SMC's serial settings.
-baud_rate = 9600
+# baud_rate = 9600
  
 # Change this to a number between 0 and 127 that matches the device number of
 # your SMC if there are multiple serial devices on the line and you want to
 # use the Pololu Protocol.
-device_number = None
+# device_number = None
  
-port = serial.Serial(port_name, baud_rate, timeout=0.1, write_timeout=0.1)
+# port = serial.Serial(port_name, baud_rate, timeout=0.1, write_timeout=0.1)
  
-smc = SmcG2Serial(port, device_number)
+# smc = SmcG2Serial(port, device_number)
  
-smc.exit_safe_start()
+# smc.exit_safe_start()
  
-error_status = smc.get_error_status()
-print("Error status: 0x{:04X}".format(error_status))
+# error_status = smc.get_error_status()
+# print("Error status: 0x{:04X}".format(error_status))
  
-target_speed = smc.get_target_speed()
-print("Target speed is {}.".format(target_speed))
+# target_speed = smc.get_target_speed()
+# print("Target speed is {}.".format(target_speed))
  
-new_speed = 3200 if target_speed <= 0 else -3200
-print("Setting target speed to {}.\n".format(new_speed));
-smc.set_target_speed(new_speed)
+# new_speed = 3200 if target_speed <= 0 else -3200
+# print("Setting target speed to {}.\n".format(new_speed));
+# smc.set_target_speed(new_speed)
 
-import time
+# import time
 
-time.sleep(1)
-smc.set_target_speed(0)
+# time.sleep(1)
+# smc.set_target_speed(0)
