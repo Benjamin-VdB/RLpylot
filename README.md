@@ -1,5 +1,6 @@
 # RLpylot
 Sailing yacht Autopilot with Reinforcement Learning on RaspberryPi
+Pololu motor Controler
 
 ## Dependencies
 - Numpy
