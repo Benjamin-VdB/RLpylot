@@ -103,7 +103,7 @@ Boat at constant speed, only lateral forces and torques at the moment. Trying to
         self.a4 = 1.
         self.a5 = 1.
         self.b4 = 10. # 10 to increase the hull effect
-        self.c3 = 10.
+        self.c3 = 1.
         self.Jzz = 0. # added moment of inertia zz
         
         self.lambd = 1.6 # rudder aspect ratio
@@ -326,7 +326,7 @@ Boat at constant speed, only lateral forces and torques at the moment. Trying to
                 if np.abs(theta) < 0.01:
                     return 1. - 0.1*np.abs((2*action/(self.action_space.n -1) -1)) 
                 else: 
-                    return - 0.1*np.abs((2*action/(self.action_space.n -1) -1))
+                    return 0 # - 0.1*np.abs((2*action/(self.action_space.n -1) -1))
                 # return - (theta)**2 - .1*thetadot**2 - .001*(((2*action/(self.action_space.n -1) -1)**2)) # doesn't work
 
             elif self.type == 'continuous':
@@ -374,6 +374,8 @@ Boat at constant speed, only lateral forces and torques at the moment. Trying to
         
         # Get the reward for the episode
         rwd = self.reward(self.state, action)
+        
+        print(self.state)
 
         return np.array(self.state), rwd, self.done, {}
     
