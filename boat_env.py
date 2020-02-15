@@ -21,7 +21,7 @@ from signalk_client.client import Client, Data
 import datetime as dt
 
 import serial
-from smcg2serial import SmcG2Serial
+from SmcG2Serial import SmcG2Serial
 
 class  BoatEnv(gym.Env):
     """
