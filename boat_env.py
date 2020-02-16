@@ -375,7 +375,7 @@ Boat at constant speed, only lateral forces and torques at the moment. Trying to
         # Get the reward for the episode
         rwd = self.reward(self.state, action)
         
-        print(self.state)
+        #print(self.state)
 
         return np.array(self.state), rwd, self.done, {}
     
